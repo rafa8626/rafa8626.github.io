@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>OpenPlayer</title>
+    <meta name="description" content="OpenPlayer: the best simplified media player for modern browsers.">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
     <link rel="icon" href="favicon.ico" type="image/x-icon">
@@ -14,6 +15,7 @@
     <style>
         body {
             max-width: 700px;
+            margin: 0 20px;
         }
         select {
             margin-top: 20px;
@@ -24,12 +26,12 @@
     </style>
 </head>
 <body>
+    <h1>OpenPlayer</h1>
     <div class="players">
-        <h1>Video Sample</h1>
+        <h2>Video</h2>
         <video class="om-player om-player__media" controls playsinline
             data-om-ads="https://pubads.g.doubleclick.net/gampad/ads?sz=640x480&iu=/124319096/external/ad_rule_samples&ciu_szs=300x250&ad_rule=1&impl=s&gdfp_req=1&env=vp&output=vmap&unviewed_position_start=1&cust_params=deployment%3Ddevsite%26sample_ar%3Dpremidpostoptimizedpod&cmsid=496&vid=short_onecue&correlator=">
             <source src="http://rmcdn.2mdn.net/Demo/vast_inspector/android.mp4" type="video/mp4">
-            <track label="English" kind="subtitles" srclang="en" src="http://www.mediaelementjs.com/dist/mediaelement.vtt" default>
         </video>
         <div>
             <label>Change source <select name="sources">
@@ -46,15 +48,14 @@
     </div>
 
     <div class="players">
-        <h1>Audio Sample</h1>
+        <h2>Audio</h2>
         <audio class="om-player om-player__media" controls>
-            <source src="https://api.soundcloud.com/tracks/323195515/stream?client_id=95f22ed54a5c297b1c41f72d713623ef" type="audio/mp3">
+            <source src="https://api.soundcloud.com/tracks/323195515/stream?client_id=TbLISXnDUpWhCyfObsGNL2UISZqmzPC7" type="audio/mp3">
         </audio>
         <div>
             <label>Change source <select name="sources">
-                <option value="https://api.soundcloud.com/tracks/323195515/stream?client_id=95f22ed54a5c297b1c41f72d713623ef">MP3 (SoundCloud)</option>
+                <option value="https://api.soundcloud.com/tracks/323195515/stream?client_id=TbLISXnDUpWhCyfObsGNL2UISZqmzPC7f">MP3 (SoundCloud)</option>
                 <option value="http://www.largesound.com/ashborytour/sound/AshboryBYU.mp3">MP3</option>
-                <option value="http://www.vorbis.com/music/Hydrate-Kenny_Beltrey.ogg">OGG</option>
                 <option value="http://db3.indexcom.com/bucket/ram/00/05/64k/05.m3u8">HLS</option>
             </select>
             </label>
@@ -92,10 +93,11 @@
             var id = this.closest('.players').querySelector('.om-player').id;
             var player = OpenPlayer.instances[id];
             player.addCaptions({
-                srclang: 'br_PT',
-                src: 'http://brenopolanski.com/html5-video-webvtt-example/MIB2-subtitles-pt-BR.vtt',
+                srclang: 'en_US',
+                src: 'http://www.mediaelementjs.com/dist/mediaelement.vtt',
                 kind: 'subtitles',
-                label: 'Portuguese (BR)'
+                label: 'English',
+                default: true,
             });
             this.removeEventListener('click', loadCaption);
         }
