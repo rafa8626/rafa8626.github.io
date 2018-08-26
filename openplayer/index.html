@@ -15,7 +15,6 @@
     <style>
         body {
             max-width: 700px;
-            margin: 0 20px;
         }
         select {
             margin-top: 20px;
@@ -29,7 +28,7 @@
     <h1>OpenPlayer</h1>
     <div class="players">
         <h2>Video</h2>
-        <video class="om-player om-player__media" controls playsinline
+        <video class="om-player om-player__media" controls playsinline data-om-options='{"hls": {"capLevelToPlayerSize": true} }'
             data-om-ads="https://pubads.g.doubleclick.net/gampad/ads?sz=640x480&iu=/124319096/external/ad_rule_samples&ciu_szs=300x250&ad_rule=1&impl=s&gdfp_req=1&env=vp&output=vmap&unviewed_position_start=1&cust_params=deployment%3Ddevsite%26sample_ar%3Dpremidpostoptimizedpod&cmsid=496&vid=short_onecue&correlator=">
             <source src="http://rmcdn.2mdn.net/Demo/vast_inspector/android.mp4" type="video/mp4">
         </video>
@@ -50,11 +49,10 @@
     <div class="players">
         <h2>Audio</h2>
         <audio class="om-player om-player__media" controls>
-            <source src="https://api.soundcloud.com/tracks/323195515/stream?client_id=TbLISXnDUpWhCyfObsGNL2UISZqmzPC7" type="audio/mp3">
+            <source src="http://www.largesound.com/ashborytour/sound/AshboryBYU.mp3" type="audio/mp3">
         </audio>
         <div>
             <label>Change source <select name="sources">
-                <option value="https://api.soundcloud.com/tracks/323195515/stream?client_id=TbLISXnDUpWhCyfObsGNL2UISZqmzPC7f">MP3 (SoundCloud)</option>
                 <option value="http://www.largesound.com/ashborytour/sound/AshboryBYU.mp3">MP3</option>
                 <option value="http://db3.indexcom.com/bucket/ram/00/05/64k/05.m3u8">HLS</option>
             </select>
