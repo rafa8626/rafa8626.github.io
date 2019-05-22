@@ -8,10 +8,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
     <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <link href="https://cdn.jsdelivr.net/npm/normalize-css@2.3.1/normalize.min.css" rel="stylesheet">
     <link href="../css/bootstrap.css" rel="stylesheet">
     <link rel="stylesheet" href="../css/font-awesome.min.css">
     <link href="../css/main.css" rel="stylesheet">
-    <link rel="stylesheet" href="../css/openplayer.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/openplayerjs@1.11.0/dist/openplayer.min.css">
     <style>
         body {
             max-width: 700px;
@@ -22,20 +23,35 @@
         select:last-child {
             margin-bottom: 20px;
         }
+        #stream-info {
+            min-height: 300px;
+        }
+        #stream-info.hidden {
+            min-height: 0;
+        }
+        #stream-info > img {
+            float: left;
+            width: 300px;
+        }
+        #stream-info > p {
+            margin-left: 315px;
+        }
+        .op-controls__test > img {
+            max-height: 18px;
+        }
     </style>
 </head>
 <body>
     <h1>OpenPlayer</h1>
     <div class="players">
         <h2>Video</h2>
-        <video class="om-player om-player__media" controls playsinline data-om-options='{"hls": {"capLevelToPlayerSize": true} }'
+        <video class="op-player__media" id="video" controls playsinline data-om-options='{"hls": {"capLevelToPlayerSize": true} }'
             data-om-ads="https://pubads.g.doubleclick.net/gampad/ads?sz=640x480&iu=/124319096/external/ad_rule_samples&ciu_szs=300x250&ad_rule=1&impl=s&gdfp_req=1&env=vp&output=vmap&unviewed_position_start=1&cust_params=deployment%3Ddevsite%26sample_ar%3Dpremidpostoptimizedpod&cmsid=496&vid=short_onecue&correlator=">
-            <source src="http://rmcdn.2mdn.net/Demo/vast_inspector/android.mp4" type="video/mp4">
+            <source src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4" type="video/mp4">
         </video>
         <div>
             <label>Change source <select name="sources">
-                <option value="http://rmcdn.2mdn.net/Demo/vast_inspector/android.mp4">MP4</option>
-                <option value="http://ep-lin-upload.s3.amazonaws.com/vupl_lin/F64/CDF/F64CDF3B0348471E95C244DE2DDDD3F3">MP4 (no ext.)</option>
+                <option value="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4" selected>MP4</option>
                 <option value="https://upload.wikimedia.org/wikipedia/commons/2/22/Volcano_Lava_Sample.webm">WebM</option>
                 <option value="https://video-dev.github.io/streams/x36xhzz/x36xhzz.m3u8">HLS</option>
                 <option value="https://dash.akamaized.net/envivio/EnvivioDash3/manifest.mpd">M(PEG)-DASH</option>
@@ -43,41 +59,52 @@
             </label>
             <button class="destroy-player">Destroy player</button>
             <button class="load-caption">Load caption</button>
+            <button class="add-control">Add control</button>
         </div>
     </div>
 
     <div class="players">
         <h2>Audio</h2>
-        <audio class="om-player om-player__media" controls>
+        <div id="stream-info" class="hidden"></div>
+        <audio class="op-player__media" id="audio" controls>
             <source src="http://www.largesound.com/ashborytour/sound/AshboryBYU.mp3" type="audio/mp3">
         </audio>
         <div>
             <label>Change source <select name="sources">
-                <option value="http://www.largesound.com/ashborytour/sound/AshboryBYU.mp3">MP3</option>
-                <option value="http://db3.indexcom.com/bucket/ram/00/05/64k/05.m3u8">HLS</option>
+                <option value="https://ccrma.stanford.edu/~jos/mp3/Latin.mp3" selected>MP3</option>
+                <option value="https://db2.indexcom.com/bucket/ram/00/05/05.m3u8">HLS</option>
             </select>
             </label>
             <button class="destroy-player">Destroy player</button>
             <button class="load-caption">Load caption</button>
+            <button class="add-control">Add control</button>
         </div>
     </div>
 
-    <script src="../js/openplayer.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/openplayerjs@1.11.0/dist/openplayer.min.js"></script>
     <script>
         var sourcesSelector = document.querySelectorAll('select[name=sources]');
         var destroyBtn = document.querySelectorAll('button.destroy-player');
         var captionBtn = document.querySelectorAll('button.load-caption');
-        
+        var controlBtn = document.querySelectorAll('button.add-control');
+        var players = document.querySelectorAll('.op-player__media');
+        var instances = [];
         function loadMedia() {
-            var id = this.closest('.players').querySelector('.om-player').id;
+            var id = this.closest('.players').querySelector('.op-player').id;
             var player = OpenPlayer.instances[id];
+            var isAudio = !!this.closest('.audio-player');
+
+            if (isAudio) {
+                document.getElementById('stream-info').innerHTML = '';
+                document.getElementById('stream-info').classList.add('hidden');
+            }
 
             player.src = this.value.replace('&amp;', '&');
             player.load();
         }
 
         function destroyPlayer() {
-            var id = this.closest('.players').querySelector('.om-player').id;
+            var id = this.closest('.players').querySelector('.op-player').id;
             var player = OpenPlayer.instances[id];
             player.destroy();
             this.removeEventListener('click', destroyPlayer);
@@ -88,16 +115,62 @@
         }
 
         function loadCaption() {
-            var id = this.closest('.players').querySelector('.om-player').id;
+            var id = this.closest('.players').querySelector('.op-player').id;
             var player = OpenPlayer.instances[id];
             player.addCaptions({
-                srclang: 'en_US',
-                src: 'https://www.mediaelementjs.com/dist/mediaelement.vtt',
+                srclang: 'br_PT',
+                src: 'http://brenopolanski.com/html5-video-webvtt-example/MIB2-subtitles-pt-BR.vtt',
                 kind: 'subtitles',
-                label: 'English',
-                default: true,
+                label: 'Portuguese (BR)'
             });
             this.removeEventListener('click', loadCaption);
+        }
+
+        function addControl() {
+            var id = this.closest('.players').querySelector('.op-player').id;
+            var player = OpenPlayer.instances[id];
+            player.addControl({
+                icon: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/Love_Heart_SVG.svg/32px-Love_Heart_SVG.svg.png',
+                title: 'Test',
+                position: 'right',
+                click: function() {
+                    alert('You clicked the new ' + id + ' control');
+                }
+            });
+            this.removeEventListener('click', addControl);
+        }
+
+        function extractMeta(data, audio) {
+            var name, desc, title, artist, image, infoArea, metaInfo, startLoc, endLoc;
+
+            // name
+            startLoc = data.indexOf("TRSN") + 11;
+            endLoc = data.indexOf("TRSO");
+            name = data.substring(startLoc, endLoc);
+
+            // desc
+            startLoc = data.indexOf("TRSO") + 11;
+            endLoc = data.indexOf("TIT2");
+            desc = data.substring(startLoc, endLoc);
+
+            // artist
+            startLoc = data.indexOf("TPE1") + 11;
+            endLoc = data.indexOf("TPE2");
+            artist = data.substring(startLoc, endLoc);
+
+            // title
+            startLoc = data.indexOf("TIT2") + 11;
+            endLoc = data.indexOf("TPE1");
+            title = data.substring(startLoc, endLoc);
+
+            // image
+            image = data.match('(http:\/\/|https:\/\/).*\.(jpg|png|svg)')[0];
+            infoArea = document.getElementById('stream-info');
+            metaInfo = '<img src="' + image + '" alt="' + title + ', by ' + artist + ' width="300"/><p>Name: ' + name + '</p>' + '<p>Desc: ' + desc + '</p>' + '<p>Artist: ' + artist + '</p>' + '<p>Title: ' + title + '</p>';
+
+            infoArea.innerHTML = metaInfo;
+            infoArea.classList.remove('hidden');
+            audio.poster = image;
         }
 
         for (var i = 0, total = sourcesSelector.length; i < total; i++) {
@@ -110,6 +183,34 @@
         for (var i = 0, total = captionBtn.length; i < total; i++) {
             captionBtn[i].addEventListener('click', loadCaption);
         }
+        for (var i = 0, total = controlBtn.length; i < total; i++) {
+            controlBtn[i].addEventListener('click', addControl);
+        }
+
+        for (var i = 0, total = players.length; i < total; i++) {
+            var ads = i === 0 ? [players[i].getAttribute('data-op-ads'),] : null;
+            instances[i] = new OpenPlayer(players[i].id, ads, false, {
+                ads: {
+                    debug: false,
+                },
+                hls: {
+                    startLevel: -1
+                }
+            });
+            instances[i].init();
+        }
+
+        instances[1].getElement().addEventListener('hlsFragParsingMetadata', function (event) {
+            var encodedTag = event.detail.samples[0].data;
+            var parsedTag = [];
+
+            encodedTag.forEach(function (element) {
+                parsedTag.push(String.fromCharCode(element));
+            });
+
+            var tagAsString = parsedTag.toString().replace(/,/g, '');
+            extractMeta(tagAsString, instances[1].getElement());
+        });
     </script>
 </body>
 </html>
