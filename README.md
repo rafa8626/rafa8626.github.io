@@ -1,1 +1,1 @@
-Rafael Miranda's resume website
+Rafael Miranda's resume website and portfolio
